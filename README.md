@@ -14,7 +14,7 @@ Wake up at five sharp, go to Pilates, enjoy a beautifully prepared, nutritious b
 
 We envy that life, and we've made the same resolution countless times: Starting tomorrow, I'm going to be that person too!
 
-But we all know that 
+But we all know that
 sometimes, you just can't do it.
 
 So, what now?
