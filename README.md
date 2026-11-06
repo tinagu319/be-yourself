@@ -70,6 +70,17 @@ npm install
 npm run dev
 ```
 
+Start the local MongoDB service from the repository root:
+
+```bash
+docker compose up -d mongodb
+```
+
+Before starting the backend, copy `backend/.env.example` to `backend/.env` and
+set `MONGODB_URI` if you use a different connection string. The Compose setup
+uses `mongodb://127.0.0.1:27017/be-yourself` by default. Stop the service with
+`docker compose down`; its named volume keeps local data between runs.
+
 Start the frontend in another terminal:
 
 ```bash
@@ -80,3 +91,8 @@ npm run dev
 
 The frontend is available at the URL printed by Vite. Its `/api` requests are
 proxied to the backend at `http://localhost:3000`.
+
+The backend provides nickname/password registration and login at
+`/api/auth/register` and `/api/auth/login`. Use the returned bearer token for
+the authenticated task endpoints: `GET /api/tasks?date=YYYY-MM-DD`,
+`POST /api/tasks`, and `PATCH /api/tasks/:taskId/completion`.
