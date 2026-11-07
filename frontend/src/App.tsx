@@ -119,6 +119,7 @@ function userErrorMessage(reason: unknown, fallback: string) {
 export default function App() {
   const [token, setToken] = useState(() => localStorage.getItem(TOKEN_KEY) || "");
   const [user, setUser] = useState<User | null>(null);
+  const [activityJourneyDay, setActivityJourneyDay] = useState<number | null>(null);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [mode, setMode] = useState<"login" | "register">("login");
   const [nickname, setNickname] = useState("");
@@ -137,6 +138,58 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (!token || !user) return;
+    let cancelled = false;
+    let lastRecordedDay = "";
+    let pending = false;
+    let midnightTimer: number;
+    setActivityJourneyDay(null);
+    const recordToday = async () => {
+      if (document.visibilityState === "hidden" || pending) return;
+      const date = localDateKey();
+      const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      const key = `${date}/${timeZone}`;
+      if (lastRecordedDay === key) return;
+      pending = true;
+      try {
+        const response = await fetch("/api/user-activity", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+          body: JSON.stringify({ date, timeZone }),
+        });
+        const body = await readResponse<{ journeyDay: number }>(response);
+        if (!cancelled) {
+          lastRecordedDay = key;
+          setActivityJourneyDay(body.journeyDay);
+        }
+      } catch (reason) {
+        if (!cancelled) setError(userErrorMessage(reason, "Could not save today's activity. Please try again."));
+      } finally {
+        pending = false;
+      }
+    };
+    const scheduleMidnight = () => {
+      const now = new Date();
+      const midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+      midnightTimer = window.setTimeout(() => {
+        void recordToday();
+        scheduleMidnight();
+      }, midnight.getTime() - now.getTime() + 100);
+    };
+    const onVisible = () => { void recordToday(); };
+    void recordToday();
+    scheduleMidnight();
+    window.addEventListener("focus", onVisible);
+    document.addEventListener("visibilitychange", onVisible);
+    return () => {
+      cancelled = true;
+      window.clearTimeout(midnightTimer);
+      window.removeEventListener("focus", onVisible);
+      document.removeEventListener("visibilitychange", onVisible);
+    };
+  }, [token, user?.id]);
 
   useEffect(() => {
     if (!studySession || studySession.status !== "running") return;
@@ -552,7 +605,7 @@ export default function App() {
           <>
             <div className="welcome-row">
               <div><p className="eyebrow">YOUR SPACE · {localDateKey()}</p><h1>Your day, your pace.</h1></div>
-              <div className="day-mark"><span>JOURNEY</span><strong>DAY {journeyDay(user.registeredAt)}</strong></div>
+              <div className="day-mark"><span>JOURNEY</span><strong>DAY {activityJourneyDay ?? journeyDay(user.registeredAt)}</strong></div>
             </div>
             <section className="panel tasks-panel">
               <div className="panel-head"><div><p className="eyebrow">TODAY</p><h2>Tasks</h2></div><span className="quiet-label">{tasks.filter(task => task.status === "completed").length} done</span></div>

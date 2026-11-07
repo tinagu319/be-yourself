@@ -8,6 +8,7 @@ import aiRoutes from "./routes/ai";
 import dailyRecapRoutes from "./routes/dailyRecap";
 import studySessionRoutes from "./routes/studySessions";
 import taskRoutes from "./routes/tasks";
+import userActivityRoutes from "./routes/userActivity";
 
 const app = express();
 const port = Number(process.env.PORT ?? 3000);
@@ -16,6 +17,7 @@ app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/ai", aiRoutes);
 app.use("/api/daily-recap", dailyRecapRoutes);
+app.use("/api/user-activity", userActivityRoutes);
 app.use("/api/tasks", taskRoutes);
 app.use("/api/study-sessions", studySessionRoutes);
 
