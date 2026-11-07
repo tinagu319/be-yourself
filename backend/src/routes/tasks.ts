@@ -5,6 +5,7 @@ import { ensureDailyHealthChallengeTasks } from "../models/healthChallenges";
 import { StudySessionModel } from "../models/StudySession";
 import { TaskModel } from "../models/Task";
 import taskBreakdownRoutes from "./taskBreakdown";
+import { recapDayBounds, RecapInputError } from "../services/dailyRecap";
 
 const router = Router();
 router.use(requireAuth);
@@ -49,13 +50,17 @@ router.get("/", async (request, response, next) => {
   }
 
   const userId = getUserId(request);
-  const { start, end } = dayBounds(date);
   const now = new Date();
   try {
+    const timeZone = request.query.timeZone;
+    if (timeZone !== undefined && (typeof timeZone !== "string" || timeZone.length > 100)) {
+      response.status(400).json({ error: "Choose a valid time zone." });
+      return;
+    }
+    const { start, end } = timeZone ? recapDayBounds(date, timeZone) : dayBounds(date);
     await ensureDailyHealthChallengeTasks(userId, date);
     const tasks = await TaskModel.find({
       userId,
-      parentTaskId: null,
       deletedAt: null,
       $or: [
         { taskType: "health-challenge", activityDate: date },
@@ -65,6 +70,10 @@ router.get("/", async (request, response, next) => {
     }).sort({ taskType: 1, createdAt: -1 });
     response.json({ tasks });
   } catch (error) {
+    if (error instanceof RecapInputError) {
+      response.status(400).json({ error: error.message });
+      return;
+    }
     next(error);
   }
 });
@@ -272,10 +281,6 @@ router.delete("/:taskId", async (request, response, next) => {
       response.status(404).json({ error: "Task not found." });
       return;
     }
-    await TaskModel.updateMany(
-      { userId: getUserId(request), parentTaskId: task._id, deletedAt: null },
-      { $set: { deletedAt: task.deletedAt } },
-    );
     response.status(204).end();
   } catch (error) {
     next(error);

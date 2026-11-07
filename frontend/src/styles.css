@@ -51,6 +51,9 @@ button { cursor: pointer; }
 .icon-button svg, .doit-button svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
 .doit-button { flex: 0 0 auto; display: inline-flex; align-items: center; gap: 6px; padding: 8px 10px; border: 0; border-radius: 6px; background: #e8efe0; color: #5d754a; font-size: 11px; font-weight: 700; }
 .doit-button svg { width: 12px; height: 12px; fill: currentColor; stroke: none; }
+.split-button { display: inline-flex; align-items: center; gap: 5px; padding: 8px; border: 0; border-radius: 6px; background: #f0f2ec; color: #617255; font: inherit; font-size: 11px; font-weight: 700; }
+.split-button svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.split-button:disabled { opacity: .55; cursor: wait; }
 .danger-icon:hover { background: #f8eeea; color: #a05d4c; }
 .edit-title { flex: 1; min-width: 0; border: 1px solid #b6c4a8; border-radius: 5px; padding: 7px 8px; background: white; color: #343a30; font-size: 13px; outline: none; }
 .empty, .loading-state { color: #979b90; font-size: 13px; padding: 14px 0; }
@@ -84,7 +87,7 @@ button { cursor: pointer; }
 .status-chip { padding: 6px 9px; border-radius: 20px; background: #f0f1eb; color: #6f776a; font-size: 10px; text-transform: capitalize; }
 .status-completed { background: #eaf0e3; color: #5b7548; }
 .status-expired { background: #f7ece7; color: #9a624f; }
-.details-actions { display: flex; align-items: center; gap: 8px; padding-bottom: 19px; border-bottom: 1px solid #eff0ea; }
+.details-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; padding-bottom: 19px; border-bottom: 1px solid #eff0ea; }
 .complete-control { margin-right: auto; display: inline-flex; align-items: center; gap: 8px; color: #62695e; font-size: 12px; }
 .complete-control input { width: 15px; height: 15px; accent-color: #6c8557; }
 .detail-description { margin: 20px 0; color: #62695e; font-size: 13px; line-height: 1.7; white-space: pre-wrap; }

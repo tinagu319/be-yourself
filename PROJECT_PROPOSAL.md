@@ -22,7 +22,7 @@ The Dashboard will show each active task's title, a manual completion checkbox, 
 
 Users will be able to create and manage tasks. Opening a task will show its description, creation date, deadline, status, real and virtual work time, work sessions, subtasks, and related history. Overdue unfinished tasks will leave the active list while remaining in historical records.
 
-Tasks are completed only when the user checks them off. Starting or ending a task timer session will never complete a task automatically.
+Tasks are completed manually, except that splitting an already completed task creates completed tasks. Starting or ending a task timer session never completes a task automatically.
 
 ### 3.2 Task Timer and Time Acceleration
 
@@ -52,7 +52,7 @@ Each user's records will be stored independently. The database will retain the a
 
 ### 3.6 Task Breakdown
 
-Following the existing product requirements, users may request AI to propose roughly ten smaller subtasks for a larger task. Users can review and edit the suggestions before saving them. Each subtask remains linked to its parent and can be completed manually.
+Every active or completed Dashboard task has a **Split** button. Clicking it generates tiny concrete actions, saves them immediately, and displays them as ordinary Dashboard tasks. Generated tasks can also be split. An active source produces active tasks; a completed source produces completed tasks that contribute to completion counts. Completed tasks keep Split, edit, and delete actions, without **Do it now**. The source remains available and each generated record retains its source link. Generated titles are English; user-authored content is preserved. There is no separate review-and-save step.
 
 ## 4. Development Plan
 
@@ -83,7 +83,7 @@ Following the existing product requirements, users may request AI to propose rou
 
 ### Phase 4 — AI Flows and Share Image
 
-- Implement user-requested AI task breakdown with editable suggestions.
+- Implement Dashboard-triggered AI splitting with immediate persistence, visible generated tasks, and inherited completion state.
 - Implement the Share-triggered daily recap and image generation.
 - Add image preview and local save, with factual figures separated from playful copy.
 
@@ -108,7 +108,7 @@ Following the existing product requirements, users may request AI to propose rou
 
 ## 6. Product Rules and Out-of-Scope Work
 
-- A task is complete only after the user manually checks it.
+- Tasks are completed manually, except that tasks created by splitting an already completed task inherit its completed state.
 - Study sessions record time; they do not change task completion state.
 - Real and virtual time are stored separately, including across multiplier changes.
 - Detailed task history is available on demand, not shown by default on the Dashboard.

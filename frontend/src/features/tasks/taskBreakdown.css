@@ -1,15 +1,7 @@
-.task-steps { margin-top: 26px; padding-top: 22px; border-top: 1px solid #eff0ea; }
-.task-steps__heading { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+﻿.task-steps { margin-top: 26px; padding-top: 22px; border-top: 1px solid #eff0ea; }
 .task-steps h2 { margin: 0; font-size: 17px; letter-spacing: -.025em; }
 .task-steps__list { list-style: none; margin: 16px 0 0; padding: 0; }
-.task-steps__list label { display: flex; align-items: flex-start; gap: 10px; padding: 9px 0; color: #464c40; font-size: 13px; }
-.task-steps__list input { margin: 2px 0 0; accent-color: #6c8557; }
-.task-steps__list span { overflow-wrap: anywhere; }
+.task-steps__list li { display: flex; align-items: center; gap: 12px; border-top: 1px solid #eff0ea; }
+.task-steps__list .task-title { overflow-wrap: anywhere; }
 .task-steps__done { color: #91978a; text-decoration: line-through; }
-.task-steps__hint { margin: 18px 0 12px; color: #848a7e; font-size: 12px; }
-.task-steps__drafts { margin: 0 0 18px; padding-left: 24px; color: #848a7e; }
-.task-steps__drafts li { padding: 4px 0; }
-.task-steps__drafts input { width: calc(100% - 36px); padding: 9px 10px; border: 1px solid #e1e4db; border-radius: 7px; background: transparent; color: #33392f; font: inherit; font-size: 13px; }
-.task-steps__drafts input:focus-visible { outline: 2px solid #a9b99b; outline-offset: 2px; }
-.task-steps__drafts button { vertical-align: middle; font-size: 19px; }
 .task-steps .error-banner { margin-top: 12px; }

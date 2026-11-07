@@ -21,5 +21,11 @@ export async function connectToDatabase() {
     && (index.partialFilterExpression.deletedAt === undefined || index.partialFilterExpression.deletedAt === null),
   );
   if (legacy?.name) await TaskModel.collection.dropIndex(legacy.name);
+  const oldStepConstraint = indexes.find(index =>
+    index.name === "userId_1_parentTaskId_1_title_1" && index.unique
+    && index.key.userId === 1 && index.key.parentTaskId === 1 && index.key.title === 1
+    && Object.keys(index.key).length === 3,
+  );
+  if (oldStepConstraint?.name) await TaskModel.collection.dropIndex(oldStepConstraint.name);
   console.log("Connected to MongoDB.");
 }

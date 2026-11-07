@@ -52,10 +52,6 @@ const taskSchema = new Schema(
 taskSchema.index({ userId: 1, status: 1, deadline: 1 });
 taskSchema.index({ userId: 1, parentTaskId: 1 });
 taskSchema.index(
-  { userId: 1, parentTaskId: 1, title: 1 },
-  { unique: true, partialFilterExpression: { parentTaskId: { $type: "objectId" }, deletedAt: null } },
-);
-taskSchema.index(
   { userId: 1, activityDate: 1, challengeId: 1 },
   {
     name: "active_daily_challenge_unique",

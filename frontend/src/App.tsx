@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import { ShareRecap, type DailyRecap } from "./features/share";
 import { DailyActivities } from "./features/share/DailyActivities";
 import { TaskBreakdown } from "./features/tasks/TaskBreakdown";
@@ -75,7 +75,7 @@ function formatTimer(milliseconds: number) {
 }
 
 function formatDateTime(value: string | null) {
-  return value ? new Date(value).toLocaleString([], { dateStyle: "medium", timeStyle: "short" }) : "—";
+  return value ? new Date(value).toLocaleString("en-US", { dateStyle: "medium", timeStyle: "short" }) : "—";
 }
 
 function toLocalDateTimeInput(value: string | null) {
@@ -88,7 +88,8 @@ function fromLocalDateTimeInput(value: string) {
   return value ? new Date(value).toISOString() : null;
 }
 
-function ActionIcon({ name }: { name: "edit" | "delete" | "play" }) {
+function ActionIcon({ name }: { name: "edit" | "delete" | "play" | "split" }) {
+  if (name === "split") return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h6m0 0 6-6h4m-10 6 6 6h4m-3-15 3 3-3 3m0 6 3 3-3 3" /></svg>;
   if (name === "play") return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5-11-6.5Z" /></svg>;
   if (name === "delete") return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3m3 0-1 13H7L6 7m4 4v5m4-5v5" /></svg>;
   return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14 5 5 5M4 20l4.5-1 11-11a2.1 2.1 0 0 0-3-3l-11 11L4 20Z" /></svg>;
@@ -124,6 +125,10 @@ export default function App() {
   const [user, setUser] = useState<User | null>(null);
   const [activityJourneyDay, setActivityJourneyDay] = useState<number | null>(null);
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [splittingTaskIds, setSplittingTaskIds] = useState<string[]>([]);
+  const splitRequests = useRef(new Set<string>());
+  const currentToken = useRef(token);
+  currentToken.current = token;
   const [mode, setMode] = useState<"login" | "register">("login");
   const [nickname, setNickname] = useState("");
   const [password, setPassword] = useState("");
@@ -214,7 +219,8 @@ export default function App() {
   }, [tasks, token]);
 
   const loadTasks = async (sessionToken: string) => {
-    const response = await fetch(`/api/tasks?date=${localDateKey()}`, {
+    const query = new URLSearchParams({ date: localDateKey(), timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone });
+    const response = await fetch(`/api/tasks?${query}`, {
       headers: { Authorization: `Bearer ${sessionToken}` },
     });
     const body = await readResponse<TaskResponse>(response);
@@ -329,6 +335,32 @@ export default function App() {
     }
   };
 
+  const splitTask = async (task: Task) => {
+    if (!token || task.status === "expired" || splitRequests.current.has(task._id)) return;
+    const sessionToken = token;
+    splitRequests.current.add(task._id);
+    setSplittingTaskIds(current => [...current, task._id]);
+    setError("");
+    try {
+      const response = await fetch(`/api/tasks/${task._id}/breakdown`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${sessionToken}` },
+        body: "{}",
+      });
+      const body = await readResponse<{ tasks: Task[] }>(response);
+      if (currentToken.current !== sessionToken) return;
+      setTasks(current => {
+        const position = current.findIndex(item => item._id === task._id);
+        return position < 0 ? [...body.tasks, ...current] : [...current.slice(0, position + 1), ...body.tasks, ...current.slice(position + 1)];
+      });
+    } catch (reason) {
+      if (currentToken.current === sessionToken) setError(userErrorMessage(reason, "Could not split this task. Please try again."));
+    } finally {
+      splitRequests.current.delete(task._id);
+      setSplittingTaskIds(current => current.filter(id => id !== task._id));
+    }
+  };
+
   const saveTaskTitle = async (task: Task, value: string) => {
     setEditingTaskId(null);
     const title = value.trim();
@@ -424,7 +456,7 @@ export default function App() {
   };
 
   const openStudyRoom = async (task: Task) => {
-    if (!token) return;
+    if (!token || task.status !== "active") return;
     setDetailTask(null);
     setStudyTask(task);
     setStudySession(null);
@@ -564,7 +596,7 @@ export default function App() {
   const virtualTimeMs = (studySession?.virtualDurationMs ?? 0) + segmentElapsed * (activeSegment?.multiplier ?? multiplier);
 
   return (
-    <main className="app-shell">
+    <main className="app-shell" lang="en">
       <header className="topbar">
         <a className="brand" href="#home"><span className="brand-mark">b.</span> be yourself</a>
         {user && <div className="user-menu"><span>{user.nickname}</span><button onClick={() => void signOut()}>Log out</button></div>}
@@ -598,7 +630,8 @@ export default function App() {
               <label className="complete-control"><input type="checkbox" checked={detailTask.status === "completed"} disabled={detailTask.status === "expired"} onChange={event => void setTaskCompletion(detailTask, event.target.checked)} /> Mark complete</label>
               <button className="icon-button" title="Edit task" aria-label="Edit task" onClick={() => { setDetailDraft({ title: detailTask.title, description: detailTask.description || "", plannedStartAt: toLocalDateTimeInput(detailTask.plannedStartAt), deadline: toLocalDateTimeInput(detailTask.deadline) }); setDetailEditing(true); }}><ActionIcon name="edit" /></button>
               <button className="icon-button danger-icon" title="Delete task" aria-label="Delete task" onClick={() => void deleteTask(detailTask)}><ActionIcon name="delete" /></button>
-              <button className="doit-button" onClick={() => void openStudyRoom(detailTask)}><ActionIcon name="play" /><span>Do it now</span></button>
+              {detailTask.status === "active" && <button className="doit-button" onClick={() => void openStudyRoom(detailTask)}><ActionIcon name="play" /><span>Do it now</span></button>}
+              {detailTask.status !== "expired" && <button className="split-button" disabled={splittingTaskIds.includes(detailTask._id)} onClick={() => void splitTask(detailTask)}><ActionIcon name="split" /><span>{splittingTaskIds.includes(detailTask._id) ? "Splitting..." : "Split"}</span></button>}
             </div>
             {detailEditing ? <form className="details-edit-form" onSubmit={saveTaskDetails}>
               <label>Title<input required maxLength={200} value={detailDraft.title} onChange={event => setDetailDraft(current => ({ ...current, title: event.target.value }))} /></label>
@@ -619,7 +652,7 @@ export default function App() {
                 <div><span>Virtual work time</span><strong>{formatTimer(detailTask.virtualDurationMs)}</strong></div>
               </div>
             </>}
-            <TaskBreakdown key={detailTask._id} taskId={detailTask._id} token={token} editable={detailTask.status === "active"} />
+            <TaskBreakdown key={`${detailTask._id}/${splittingTaskIds.includes(detailTask._id)}`} taskId={detailTask._id} token={token} onOpenTask={openTaskDetails} />
           </section>
         ) : (
           <>
@@ -634,9 +667,10 @@ export default function App() {
                 {tasks.map(task => <article className={`task-row ${task.status === "completed" ? "is-done" : ""}`} key={task._id}>
                   <input type="checkbox" checked={task.status === "completed"} onChange={event => void setTaskCompletion(task, event.target.checked)} aria-label={`Mark ${task.title} ${task.status === "completed" ? "incomplete" : "complete"}`} />
                   {editingTaskId === task._id ? <input className="edit-title" autoFocus value={editingTitle} maxLength={200} onChange={event => setEditingTitle(event.target.value)} onBlur={() => setEditingTaskId(null)} onKeyDown={event => { if (event.key === "Enter") { event.preventDefault(); void saveTaskTitle(task, editingTitle); } if (event.key === "Escape") setEditingTaskId(null); }} aria-label="Edit task title" /> : <button className="task-title" onClick={() => void openTaskDetails(task._id)} title="Open task details">{task.title}</button>}
-                  {task.deadline && <span className="deadline">Due {new Date(task.deadline).toLocaleDateString([], { month: "short", day: "numeric" })}{new Date(task.deadline).toLocaleDateString() === new Date().toLocaleDateString() ? `, ${new Date(task.deadline).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}` : ""}</span>}
+                  {task.deadline && <span className="deadline">Due {new Date(task.deadline).toLocaleDateString("en-US", { month: "short", day: "numeric" })}{new Date(task.deadline).toLocaleDateString("en-US") === new Date().toLocaleDateString("en-US") ? `, ${new Date(task.deadline).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}` : ""}</span>}
                   <div className="task-actions">
-                    <button className="doit-button" aria-label={`Do it now: ${task.title}`} onClick={() => void openStudyRoom(task)}><ActionIcon name="play" /><span>Do it now</span></button>
+                    {task.status === "active" && <button className="doit-button" aria-label={`Do it now: ${task.title}`} onClick={() => void openStudyRoom(task)}><ActionIcon name="play" /><span>Do it now</span></button>}
+                    <button className="split-button" aria-label={`Split task: ${task.title}`} disabled={splittingTaskIds.includes(task._id)} onClick={() => void splitTask(task)}><ActionIcon name="split" /><span>{splittingTaskIds.includes(task._id) ? "Splitting..." : "Split"}</span></button>
                     {editingTaskId !== task._id && <button className="icon-button" aria-label={`Edit ${task.title}`} title="Edit task" onClick={() => { setEditingTitle(task.title); setEditingTaskId(task._id); }}><ActionIcon name="edit" /></button>}
                     <button className="icon-button danger-icon" aria-label={`Delete ${task.title}`} title="Delete task" onClick={() => void deleteTask(task)}><ActionIcon name="delete" /></button>
                   </div>
