@@ -77,15 +77,14 @@ export function ShareRecap({ recap, generateRecap }: ShareRecapProps) {
       {error && <p className="by-share__error" role="alert">{error}</p>}
       {busy && <p className="by-share__note" role="status">Preparing your daily recap...</p>}
       {visiblePreview && <figure className="by-share__preview">
-        <img src={visiblePreview.url} alt={`Be Yourself daily recap for ${visiblePreview.recap.date}`} />
-        <figcaption>Daily recap for {visiblePreview.recap.date}. AI copy is for entertainment; virtual time is accelerated.</figcaption>
+        <img src={visiblePreview.url} alt={`Day ${visiblePreview.recap.journeyDay} of self-discipline — ${visiblePreview.recap.date}`} />
+        <figcaption>Day {visiblePreview.recap.journeyDay} of self-discipline · {visiblePreview.recap.date}. AI copy is for entertainment; virtual time is accelerated.</figcaption>
         <div className="by-share__sr-only">
           <p>AI recap, just for fun: {visiblePreview.recap.summary}</p>
           <dl>
             <dt>Completed tasks</dt><dd>{visiblePreview.recap.stats.completedTasks}</dd>
-            <dt>Health challenges completed</dt><dd>{visiblePreview.recap.stats.completedHealthTasks}</dd>
-            <dt>Actual study time</dt><dd>{formatDuration(visiblePreview.recap.stats.realStudyDurationMs)}</dd>
-            <dt>Virtual study time, accelerated, not actual elapsed time</dt><dd>{formatDuration(visiblePreview.recap.stats.virtualStudyDurationMs)}</dd>
+            <dt>Actual work time</dt><dd>{formatDuration(visiblePreview.recap.stats.realWorkDurationMs)}</dd>
+            <dt>Virtual work time, accelerated, not actual elapsed time</dt><dd>{formatDuration(visiblePreview.recap.stats.virtualWorkDurationMs)}</dd>
           </dl>
         </div>
       </figure>}

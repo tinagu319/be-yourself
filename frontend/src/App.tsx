@@ -613,8 +613,8 @@ export default function App() {
                 <div><span>First focus started</span><strong>{formatDateTime(detailTimes.firstStudyStartedAt)}</strong></div>
                 <div><span>Last focus ended</span><strong>{formatDateTime(detailTimes.lastSessionEndedAt)}</strong></div>
                 <div><span>Completed</span><strong>{formatDateTime(detailTask.completedAt)}</strong></div>
-                <div><span>Real study time</span><strong>{formatTimer(detailTask.realDurationMs)}</strong></div>
-                <div><span>Virtual study time</span><strong>{formatTimer(detailTask.virtualDurationMs)}</strong></div>
+                <div><span>Real work time</span><strong>{formatTimer(detailTask.realDurationMs)}</strong></div>
+                <div><span>Virtual work time</span><strong>{formatTimer(detailTask.virtualDurationMs)}</strong></div>
               </div>
             </>}
           </section>
@@ -631,7 +631,6 @@ export default function App() {
                 {tasks.map(task => <article className={`task-row ${task.status === "completed" ? "is-done" : ""}`} key={task._id}>
                   <input type="checkbox" checked={task.status === "completed"} onChange={event => void setTaskCompletion(task, event.target.checked)} aria-label={`Mark ${task.title} ${task.status === "completed" ? "incomplete" : "complete"}`} />
                   {editingTaskId === task._id ? <input className="edit-title" autoFocus value={editingTitle} maxLength={200} onChange={event => setEditingTitle(event.target.value)} onBlur={() => setEditingTaskId(null)} onKeyDown={event => { if (event.key === "Enter") { event.preventDefault(); void saveTaskTitle(task, editingTitle); } if (event.key === "Escape") setEditingTaskId(null); }} aria-label="Edit task title" /> : <button className="task-title" onClick={() => void openTaskDetails(task._id)} title="Open task details">{task.title}</button>}
-                  {task.taskType === "health-challenge" && <span className="task-badge">DAILY 5</span>}
                   {task.deadline && <span className="deadline">Due {new Date(task.deadline).toLocaleDateString([], { month: "short", day: "numeric" })}{new Date(task.deadline).toLocaleDateString() === new Date().toLocaleDateString() ? `, ${new Date(task.deadline).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}` : ""}</span>}
                   <div className="task-actions">
                     <button className="doit-button" aria-label={`Do it now: ${task.title}`} onClick={() => void openStudyRoom(task)}><ActionIcon name="play" /><span>Do it now</span></button>

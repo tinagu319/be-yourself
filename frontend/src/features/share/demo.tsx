@@ -7,12 +7,12 @@ import "./demo.css";
 // Standalone development fixture. Never imported by the production entry point.
 const example: DailyRecap = {
   date: "2026-11-06",
-  summary: "Today, you conquered three mighty tasks, collected two healthy wins, and entered the study room like a scholar on a mission. Small steps, main-character energy. Your legend is growing!",
+  journeyDay: 99,
+  summary: "Today, you conquered a mighty to-do list and got to work like a hero on a mission. Small steps, main-character energy. Your legend is growing!",
   stats: {
-    completedTasks: 3,
-    completedHealthTasks: 2,
-    realStudyDurationMs: 2_705_000,
-    virtualStudyDurationMs: 27_050_000,
+    completedTasks: 5,
+    realWorkDurationMs: 2_705_000,
+    virtualWorkDurationMs: 27_050_000,
   },
 };
 

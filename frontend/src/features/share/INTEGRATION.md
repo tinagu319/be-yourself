@@ -10,7 +10,9 @@ import { ShareRecap, type DailyRecap } from "./features/share";
 ```
 
 `DailyRecap` uses the requested shape in `types.ts`. `date` is a calendar date
-(`YYYY-MM-DD`), task counts are non-negative integers, and durations are finite,
+(`YYYY-MM-DD`), `journeyDay` is an integer starting at 99, the combined
+`completedTasks` count is a non-negative integer, and `realWorkDurationMs` and
+`virtualWorkDurationMs` are finite,
 non-negative milliseconds. Displayed durations are floored to whole seconds;
 virtual time is taken directly from the input, never recalculated from real time.
 
@@ -27,7 +29,10 @@ Changing the input hides a stale preview and disables Save until Share is presse
 again. Generation errors appear inline and can be retried with Share.
 
 The image separates `AI RECAP / JUST FOR FUN`, `REAL RECORDS`, and accelerated
-virtual study time. Summary text never supplies or modifies the statistical values.
+virtual work time. Health tasks contribute to the ordinary completed-task total,
+without a separate label. The heading is `Day N of self-discipline`; N comes
+from the backend's registration-based journey calculation. Summary text never
+supplies or modifies the statistical values or the journey day.
 The image is 1080 pixels wide; height expands for the summary. Oversized summaries
 that exceed the Canvas size guard show an error rather than being silently clipped.
 Styles are scoped to `.by-share`; no global stylesheet changes are needed.

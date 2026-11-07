@@ -17,9 +17,12 @@ function validate(recap: DailyRecap) {
     throw new Error("Please provide a valid recap date (YYYY-MM-DD).");
   }
   if (!recap.summary.trim()) throw new Error("Please provide a daily summary.");
+  if (!Number.isSafeInteger(recap.journeyDay) || recap.journeyDay < 99) {
+    throw new Error("Please provide a valid self-discipline day.");
+  }
   for (const [key, value] of Object.entries(recap.stats)) {
     if (!Number.isFinite(value) || value < 0 || value > Number.MAX_SAFE_INTEGER ||
-        ((key === "completedTasks" || key === "completedHealthTasks") && !Number.isInteger(value))) {
+        (key === "completedTasks" && !Number.isInteger(value))) {
       throw new Error("Daily statistics must contain valid non-negative counts and durations.");
     }
   }
@@ -85,31 +88,30 @@ export async function renderRecap(recap: DailyRecap): Promise<Blob> {
   text("b", 111, 132, 32, "#60794d", 700);
   text("Be Yourself", 160, 133, 28, "#35432d", 700);
   text(recap.date, 96, 208, 23, "#67715d");
-  text("Small wins.", 96, 293, 66, "#293126", 700);
-  text("A legendary day.", 96, 371, 66, "#60794d", 700);
+  text(`Day ${recap.journeyDay}`, 96, 293, 66, "#293126", 700);
+  text("of self-discipline.", 96, 371, 66, "#60794d", 700);
 
   box(96, 420, CONTENT_WIDTH, storyHeight, "#f1ede4");
   text("AI RECAP / JUST FOR FUN", 128, 470, 20, "#77572d", 700);
   lines.forEach((line, index) => text(line, 128, 526 + index * 48, 32, "#514a3e"));
 
   text("REAL RECORDS", 96, statsTop, 21, "#506741", 700);
-  function count(label: string, value: number, x: number) {
-    box(x, statsTop + 22, 432, 112, "#eef3e8", 16);
-    text(label, x + 24, statsTop + 56, 20, "#59694d");
-    text(String(value), x + 24, statsTop + 103, 32, "#293d22", 650, 384);
+  function count(label: string, value: number) {
+    box(96, statsTop + 22, CONTENT_WIDTH, 112, "#eef3e8", 16);
+    text(label, 120, statsTop + 56, 20, "#59694d");
+    text(String(value), 120, statsTop + 103, 32, "#293d22", 650, 840);
   }
-  count("Completed tasks", recap.stats.completedTasks, 96);
-  count("Health challenges completed", recap.stats.completedHealthTasks, 552);
+  count("Completed tasks", recap.stats.completedTasks);
   box(96, statsTop + 150, CONTENT_WIDTH, 94, "#eef3e8", 16);
-  text("Actual study time", 120, statsTop + 186, 20, "#59694d");
-  text(formatDuration(recap.stats.realStudyDurationMs), 120, statsTop + 223, 30, "#293d22", 650, 840);
+  text("Actual work time", 120, statsTop + 186, 20, "#59694d");
+  text(formatDuration(recap.stats.realWorkDurationMs), 120, statsTop + 223, 30, "#293d22", 650, 840);
 
   box(96, statsTop + 270, CONTENT_WIDTH, 106, "#f1ede4", 16);
-  text("VIRTUAL STUDY TIME", 120, statsTop + 305, 20, "#77572d", 700);
+  text("VIRTUAL WORK TIME", 120, statsTop + 305, 20, "#77572d", 700);
   text("Accelerated / not actual elapsed time", 120, statsTop + 350, 20, "#77572d");
   // Keep the accelerated figure separate from the real-time record.
   ctx.textAlign = "right";
-  text(formatDuration(recap.stats.virtualStudyDurationMs), 960, statsTop + 350, 30, "#514a3e", 650, 400);
+  text(formatDuration(recap.stats.virtualWorkDurationMs), 960, statsTop + 350, 30, "#514a3e", 650, 400);
   ctx.textAlign = "left";
 
   text("A little effort counts. Be yourself.", 96, height - 72, 20, "#67715d");

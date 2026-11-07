@@ -1,10 +1,10 @@
 export type DailyRecap = {
   date: string;
+  journeyDay: number;
   summary: string;
   stats: {
     completedTasks: number;
-    completedHealthTasks: number;
-    realStudyDurationMs: number;
-    virtualStudyDurationMs: number;
+    realWorkDurationMs: number;
+    virtualWorkDurationMs: number;
   };
 };

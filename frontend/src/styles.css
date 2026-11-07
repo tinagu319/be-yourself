@@ -44,7 +44,6 @@ button { cursor: pointer; }
 .task-title { flex: 1; min-width: 0; border: 0; padding: 8px 2px; background: transparent; color: #464c40; text-align: left; font-size: 13px; }
 .task-title:hover { color: #60794d; }
 .is-done .task-title { color: #a0a498; text-decoration: line-through; }
-.task-badge { flex: 0 0 auto; padding: 5px 7px; border-radius: 5px; background: #f0f3e9; color: #768764; font-size: 9px; font-weight: 750; letter-spacing: .06em; }
 .deadline { flex: 0 0 auto; color: #a0885f; background: #f7f1e5; border-radius: 5px; padding: 5px 7px; font-size: 10px; }
 .task-actions { flex: 0 0 auto; display: flex; align-items: center; gap: 5px; }
 .icon-button { width: 31px; height: 31px; border: 0; border-radius: 7px; display: inline-grid; place-items: center; background: transparent; color: #828a7b; }
