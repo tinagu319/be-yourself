@@ -11,7 +11,7 @@ let client: GoogleGenAI | undefined;
 // Use one free-tier eligible model; never fall back to another model.
 const GEMINI_MODEL = "gemini-3.5-flash-lite";
 
-export async function generateGeminiText(prompt: string): Promise<string> {
+export async function generateGeminiText(prompt: string, responseJsonSchema?: Record<string, unknown>): Promise<string> {
   const apiKey = process.env.GEMINI_API_KEY?.trim();
   if (!apiKey) throw new GeminiError(503, "AI generation is not configured yet.");
 
@@ -20,7 +20,11 @@ export async function generateGeminiText(prompt: string): Promise<string> {
     const result = await client.models.generateContent({
       model: GEMINI_MODEL,
       contents: prompt,
-      config: { maxOutputTokens: 2048, httpOptions: { timeout: 30_000 } },
+      config: {
+        maxOutputTokens: 2048,
+        httpOptions: { timeout: 30_000 },
+        ...(responseJsonSchema ? { responseMimeType: "application/json", responseJsonSchema } : {}),
+      },
     });
     const text = result.text?.trim();
     if (!text) throw new GeminiError(502, "AI did not return any text. Please try again.");

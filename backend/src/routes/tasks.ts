@@ -4,6 +4,7 @@ import { requireAuth, type AuthenticatedRequest } from "../auth/requireAuth";
 import { ensureDailyHealthChallengeTasks } from "../models/healthChallenges";
 import { StudySessionModel } from "../models/StudySession";
 import { TaskModel } from "../models/Task";
+import taskBreakdownRoutes from "./taskBreakdown";
 
 const router = Router();
 router.use(requireAuth);
@@ -38,6 +39,8 @@ router.use(async (request, _response, next) => {
   }
 });
 
+router.use(taskBreakdownRoutes);
+
 router.get("/", async (request, response, next) => {
   const date = parseDateKey(request.query.date);
   if (!date) {
@@ -52,6 +55,7 @@ router.get("/", async (request, response, next) => {
     await ensureDailyHealthChallengeTasks(userId, date);
     const tasks = await TaskModel.find({
       userId,
+      parentTaskId: null,
       deletedAt: null,
       $or: [
         { taskType: "health-challenge", activityDate: date },
@@ -268,6 +272,10 @@ router.delete("/:taskId", async (request, response, next) => {
       response.status(404).json({ error: "Task not found." });
       return;
     }
+    await TaskModel.updateMany(
+      { userId: getUserId(request), parentTaskId: task._id, deletedAt: null },
+      { $set: { deletedAt: task.deletedAt } },
+    );
     response.status(204).end();
   } catch (error) {
     next(error);

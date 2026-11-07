@@ -1,6 +1,7 @@
 import { FormEvent, useEffect, useState } from "react";
 import { ShareRecap, type DailyRecap } from "./features/share";
 import { DailyActivities } from "./features/share/DailyActivities";
+import { TaskBreakdown } from "./features/tasks/TaskBreakdown";
 
 type User = { id: string; nickname: string; registeredAt: string };
 type Task = {
@@ -618,6 +619,7 @@ export default function App() {
                 <div><span>Virtual work time</span><strong>{formatTimer(detailTask.virtualDurationMs)}</strong></div>
               </div>
             </>}
+            <TaskBreakdown key={detailTask._id} taskId={detailTask._id} token={token} editable={detailTask.status === "active"} />
           </section>
         ) : (
           <>

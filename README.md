@@ -117,3 +117,17 @@ The Dashboard's collapsed Other activities section uses authenticated
 `DELETE /api/daily-activities/:activityId` with `{date,timeZone}`. These routes
 manage only the current user's current local day. Saved activities are included
 when the user next presses Share; adding an activity does not call Gemini.
+
+### Task breakdown
+
+Open an active task's details and click **Break down with AI** to get ten
+suggestions. Edit or remove suggestions, then click **Save subtasks** to persist
+them. Cancel leaves the database unchanged. Saved subtasks appear only in task
+details, with manual checkboxes. Completing every step does not complete its
+parent; the parent checkbox remains independent.
+
+The authenticated task routes are `POST /api/tasks/:taskId/breakdown`,
+`GET /api/tasks/:taskId/subtasks`, `POST /api/tasks/:taskId/subtasks` with
+`{titles: string[]}`, and `PATCH /api/tasks/:taskId/subtasks/:subtaskId` with
+`{completed: boolean}`. One saved breakdown per task is supported. The recap
+counts completed parent tasks once and uses completed steps as progress context.
