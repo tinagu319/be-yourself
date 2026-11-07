@@ -1,14 +1,15 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { formatDuration, renderRecap } from "./renderRecap";
 import type { DailyRecap } from "./types";
 import "./share.css";
 
 type Preview = { url: string; recap: DailyRecap; key: string };
-type ShareRecapProps =
+type ShareRecapProps = (
   | { recap: DailyRecap; generateRecap?: never }
-  | { recap?: never; generateRecap: () => Promise<DailyRecap> };
+  | { recap?: never; generateRecap: () => Promise<DailyRecap> }
+) & { children?: ReactNode };
 
-export function ShareRecap({ recap, generateRecap }: ShareRecapProps) {
+export function ShareRecap({ recap, generateRecap, children }: ShareRecapProps) {
   const key = recap ? JSON.stringify(recap) : "generated-recap";
   const latestKey = useRef(key);
   latestKey.current = key;
@@ -74,6 +75,7 @@ export function ShareRecap({ recap, generateRecap }: ShareRecapProps) {
         {visiblePreview && <button className="by-share__save" type="button" onClick={save} disabled={busy}>Save</button>}
       </div>
       </div>
+      {children}
       {error && <p className="by-share__error" role="alert">{error}</p>}
       {busy && <p className="by-share__note" role="status">Preparing your daily recap...</p>}
       {visiblePreview && <figure className="by-share__preview">

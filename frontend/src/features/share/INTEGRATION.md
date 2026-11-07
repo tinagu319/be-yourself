@@ -24,6 +24,11 @@ Every Share click requests a new recap. In-flight clicks are ignored. There is
 no second generation button or model call on mount or prop changes.
 The `recap` prop remains available for standalone use; provide either `recap`
 or `generateRecap`, not both. The component itself does not fetch records.
+The Dashboard supplies `DailyActivities` as a child of this component. Its
+collapsed Other activities section loads today's records on opening, saves
+additions through `POST /api/daily-activities`, and removes individual records
+through `DELETE /api/daily-activities/:activityId`. These operations never
+generate a recap; the next Share request reads the saved activities.
 **Save** downloads exactly the previewed PNG as `be-yourself-YYYY-MM-DD.png`.
 Changing the input hides a stale preview and disables Save until Share is pressed
 again. Generation errors appear inline and can be retried with Share.

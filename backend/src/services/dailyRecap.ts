@@ -96,8 +96,8 @@ export async function generateDailyRecap(userId: Types.ObjectId, date: string, t
     date,
     journeyDay: activity.journeyDay,
     stats,
-    completedTasks: completedTasks.slice(0, 50).map(task => task.title),
-    otherActivities: (dailyRecord?.activities ?? []).slice(0, 30).map(activity => activity.text),
+    completedTasks: completedTasks.map(task => task.title),
+    otherActivities: (dailyRecord?.activities ?? []).map(activity => activity.text),
   };
   const summary = await generateGeminiText([
     "Write one short first-person daily-life recap in English for Be Yourself, about 60–100 words.",

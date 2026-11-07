@@ -1,5 +1,6 @@
 import { FormEvent, useEffect, useState } from "react";
 import { ShareRecap, type DailyRecap } from "./features/share";
+import { DailyActivities } from "./features/share/DailyActivities";
 
 type User = { id: string; nickname: string; registeredAt: string };
 type Task = {
@@ -645,7 +646,7 @@ export default function App() {
               </form>
               <p className="list-hint">Select a task title to open its details.</p>
             </section>
-            <ShareRecap key={user.id} generateRecap={generateDailyRecap} />
+            <ShareRecap key={user.id} generateRecap={generateDailyRecap}><DailyActivities token={token} /></ShareRecap>
           </>
         ) : (
           <section className="auth-card">

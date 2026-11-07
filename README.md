@@ -110,3 +110,10 @@ Send an authenticated `POST /api/ai/generate` request with JSON
 `{"prompt":"Write a short positive daily recap."}` and
 `Authorization: Bearer <session token>`. The response is `{"text":"..."}`.
 Generation runs only when this endpoint is called; results are not saved.
+
+The Dashboard's collapsed Other activities section uses authenticated
+`GET /api/daily-activities?date=YYYY-MM-DD&timeZone=America%2FNew_York`,
+`POST /api/daily-activities` with `{date,timeZone,text}`, and
+`DELETE /api/daily-activities/:activityId` with `{date,timeZone}`. These routes
+manage only the current user's current local day. Saved activities are included
+when the user next presses Share; adding an activity does not call Gemini.
