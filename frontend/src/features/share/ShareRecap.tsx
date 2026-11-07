@@ -4,9 +4,12 @@ import type { DailyRecap } from "./types";
 import "./share.css";
 
 type Preview = { url: string; recap: DailyRecap; key: string };
+type ShareRecapProps =
+  | { recap: DailyRecap; generateRecap?: never }
+  | { recap?: never; generateRecap: () => Promise<DailyRecap> };
 
-export function ShareRecap({ recap }: { recap: DailyRecap }) {
-  const key = JSON.stringify(recap);
+export function ShareRecap({ recap, generateRecap }: ShareRecapProps) {
+  const key = recap ? JSON.stringify(recap) : "generated-recap";
   const latestKey = useRef(key);
   latestKey.current = key;
   const [preview, setPreview] = useState<Preview | null>(null);
@@ -30,9 +33,12 @@ export function ShareRecap({ recap }: { recap: DailyRecap }) {
     inFlight.current = true;
     setBusy(true);
     setError("");
-    const snapshot: DailyRecap = { ...recap, stats: { ...recap.stats } };
+    setPreview(null);
     const requestedKey = key;
     try {
+      const source = generateRecap ? await generateRecap() : recap!;
+      if (!mounted.current || latestKey.current !== requestedKey) return;
+      const snapshot: DailyRecap = { ...source, stats: { ...source.stats } };
       const blob = await renderRecap(snapshot);
       if (!mounted.current || latestKey.current !== requestedKey) return;
       const url = URL.createObjectURL(blob);
@@ -61,15 +67,15 @@ export function ShareRecap({ recap }: { recap: DailyRecap }) {
 
   return (
     <section className="by-share" aria-label="Daily recap share image" aria-busy={busy}>
-      <p className="by-share__eyebrow">YOUR DAY, WORTH CELEBRATING</p>
-      <h2>A small day. A great story.</h2>
-      <p className="by-share__intro">A keepsake of your day, with playful AI storytelling and clearly labeled real records.</p>
+      <div className="by-share__heading">
+      <h2>Daily recap</h2>
       <div className="by-share__actions">
-        <button type="button" onClick={() => void share()} disabled={busy}>{busy ? "Creating image..." : "Share"}</button>
-        <button className="by-share__save" type="button" onClick={save} disabled={!visiblePreview || busy}>Save</button>
+        <button type="button" onClick={() => void share()} disabled={busy}>{busy ? "Creating..." : "Share"}</button>
+        {visiblePreview && <button className="by-share__save" type="button" onClick={save} disabled={busy}>Save</button>}
+      </div>
       </div>
       {error && <p className="by-share__error" role="alert">{error}</p>}
-      <p className="by-share__note" role="status">{busy ? "Preparing your PNG..." : visiblePreview ? "Preview ready. Save downloads this image as a PNG." : "Press Share to create your image. Nothing is posted automatically."}</p>
+      {busy && <p className="by-share__note" role="status">Preparing your daily recap...</p>}
       {visiblePreview && <figure className="by-share__preview">
         <img src={visiblePreview.url} alt={`Be Yourself daily recap for ${visiblePreview.recap.date}`} />
         <figcaption>Daily recap for {visiblePreview.recap.date}. AI copy is for entertainment; virtual time is accelerated.</figcaption>

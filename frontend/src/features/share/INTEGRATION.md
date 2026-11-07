@@ -14,10 +14,14 @@ import { ShareRecap, type DailyRecap } from "./features/share";
 non-negative milliseconds. Displayed durations are floored to whole seconds;
 virtual time is taken directly from the input, never recalculated from real time.
 
-The host should place this component in the Dashboard's user-initiated daily
-sharing flow, after it has obtained that day's `DailyRecap`. This module does not
-fetch records or generate AI text. The component's **Share** button is the only
-image-generation trigger. Mounting and prop changes never generate an image.
+The Dashboard uses `<ShareRecap generateRecap={generateDailyRecap} />`. The
+callback requests `POST /api/daily-recap` with the current local `date`, IANA
+`timeZone`, and login token, returning `DailyRecap`. The component calls it only
+from the **Share** handler, then renders the returned recap to PNG automatically.
+Every Share click requests a new recap. In-flight clicks are ignored. There is
+no second generation button or model call on mount or prop changes.
+The `recap` prop remains available for standalone use; provide either `recap`
+or `generateRecap`, not both. The component itself does not fetch records.
 **Save** downloads exactly the previewed PNG as `be-yourself-YYYY-MM-DD.png`.
 Changing the input hides a stale preview and disables Save until Share is pressed
 again. Generation errors appear inline and can be retried with Share.

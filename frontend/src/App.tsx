@@ -1,4 +1,5 @@
 import { FormEvent, useEffect, useState } from "react";
+import { ShareRecap, type DailyRecap } from "./features/share";
 
 type User = { id: string; nickname: string; registeredAt: string };
 type Task = {
@@ -288,6 +289,22 @@ export default function App() {
       setError(userErrorMessage(reason, "Could not add the task. Please try again."));
     } finally {
       setSaving(false);
+    }
+  };
+
+  const generateDailyRecap = async (): Promise<DailyRecap> => {
+    try {
+      const response = await fetch("/api/daily-recap", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({
+          date: localDateKey(),
+          timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        }),
+      });
+      return await readResponse<DailyRecap>(response);
+    } catch (reason) {
+      throw new Error(userErrorMessage(reason, "Could not create your daily recap. Please try again."));
     }
   };
 
@@ -629,6 +646,7 @@ export default function App() {
               </form>
               <p className="list-hint">Select a task title to open its details.</p>
             </section>
+            <ShareRecap key={user.id} generateRecap={generateDailyRecap} />
           </>
         ) : (
           <section className="auth-card">

@@ -1,6 +1,7 @@
-.by-share { box-sizing: border-box; width: 100%; max-width: 720px; padding: clamp(20px, 5vw, 36px); border: 1px solid #e4e7dc; border-radius: 20px; background: #fffefa; color: #293126; font-family: system-ui, sans-serif; }
+.by-share { box-sizing: border-box; width: 100%; margin-top: 18px; padding: 25px; border: 1px solid #e9e9e1; border-radius: 15px; background: #fffefa; color: #293126; font-family: system-ui, sans-serif; }
+.by-share__heading { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
 .by-share .by-share__eyebrow { margin: 0 0 12px; color: #60794d; font-size: 10px; font-weight: 750; letter-spacing: .13em; }
-.by-share h2 { margin: 0; font-size: clamp(24px, 5vw, 34px); letter-spacing: -.04em; line-height: 1.2; }
+.by-share h2 { margin: 0; font-size: 19px; letter-spacing: -.035em; line-height: 1.2; }
 .by-share .by-share__intro { max-width: 490px; margin: 14px 0 24px; color: #68715f; font-size: 14px; line-height: 1.7; }
 .by-share .by-share__actions { display: flex; flex-wrap: wrap; gap: 10px; }
 .by-share button { min-height: 44px; padding: 12px 24px; border: 1px solid #60794d; border-radius: 10px; background: #60794d; color: #fff; cursor: pointer; font: 650 14px system-ui, sans-serif; }
