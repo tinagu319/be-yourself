@@ -1,0 +1,7 @@
+﻿.task-steps { margin-top: 26px; padding-top: 22px; border-top: 1px solid #eff0ea; }
+.task-steps h2 { margin: 0; font-size: 17px; letter-spacing: -.025em; }
+.task-steps__list { list-style: none; margin: 16px 0 0; padding: 0; }
+.task-steps__list li { display: flex; align-items: center; gap: 12px; border-top: 1px solid #eff0ea; }
+.task-steps__list .task-title { overflow-wrap: anywhere; }
+.task-steps__done { color: #91978a; text-decoration: line-through; }
+.task-steps .error-banner { margin-top: 12px; }

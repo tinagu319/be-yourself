@@ -109,7 +109,7 @@ router.post("/", async (request, response, next) => {
 
     const runningSession = await StudySessionModel.findOne({ userId: ownerId, status: "running" });
     if (runningSession && runningSession.taskId.toString() !== taskId) {
-      response.status(409).json({ error: "Pause or end the current study session first." });
+      response.status(409).json({ error: "Pause or end the current work session first." });
       return;
     }
 

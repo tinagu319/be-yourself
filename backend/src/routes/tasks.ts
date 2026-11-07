@@ -4,6 +4,8 @@ import { requireAuth, type AuthenticatedRequest } from "../auth/requireAuth";
 import { ensureDailyHealthChallengeTasks } from "../models/healthChallenges";
 import { StudySessionModel } from "../models/StudySession";
 import { TaskModel } from "../models/Task";
+import taskBreakdownRoutes from "./taskBreakdown";
+import { recapDayBounds, RecapInputError } from "../services/dailyRecap";
 
 const router = Router();
 router.use(requireAuth);
@@ -38,6 +40,8 @@ router.use(async (request, _response, next) => {
   }
 });
 
+router.use(taskBreakdownRoutes);
+
 router.get("/", async (request, response, next) => {
   const date = parseDateKey(request.query.date);
   if (!date) {
@@ -46,9 +50,14 @@ router.get("/", async (request, response, next) => {
   }
 
   const userId = getUserId(request);
-  const { start, end } = dayBounds(date);
   const now = new Date();
   try {
+    const timeZone = request.query.timeZone;
+    if (timeZone !== undefined && (typeof timeZone !== "string" || timeZone.length > 100)) {
+      response.status(400).json({ error: "Choose a valid time zone." });
+      return;
+    }
+    const { start, end } = timeZone ? recapDayBounds(date, timeZone) : dayBounds(date);
     await ensureDailyHealthChallengeTasks(userId, date);
     const tasks = await TaskModel.find({
       userId,
@@ -61,6 +70,10 @@ router.get("/", async (request, response, next) => {
     }).sort({ taskType: 1, createdAt: -1 });
     response.json({ tasks });
   } catch (error) {
+    if (error instanceof RecapInputError) {
+      response.status(400).json({ error: error.message });
+      return;
+    }
     next(error);
   }
 });

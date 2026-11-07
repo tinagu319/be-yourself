@@ -54,6 +54,7 @@ taskSchema.index({ userId: 1, parentTaskId: 1 });
 taskSchema.index(
   { userId: 1, activityDate: 1, challengeId: 1 },
   {
+    name: "active_daily_challenge_unique",
     unique: true,
     partialFilterExpression: { taskType: "health-challenge", deletedAt: null },
   },
