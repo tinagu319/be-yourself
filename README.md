@@ -61,7 +61,7 @@ Take it easy! Welcome to a world where everyone can pretend to have it all toget
 
 ## Features and status
 
-The introduction above is the author's original writing. This guide describes the implemented app.
+This guide describes the implemented app.
 
 | Feature | Behavior |
 | --- | --- |
