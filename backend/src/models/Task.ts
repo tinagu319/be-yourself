@@ -1,6 +1,7 @@
 import { model, Schema, type InferSchemaType } from "mongoose";
 
 export const TIME_MULTIPLIERS = [1, 10, 20, 100] as const;
+export const AVAILABLE_TIME_MULTIPLIERS = [1, 10, 100] as const;
 
 const taskSchema = new Schema(
   {
@@ -31,6 +32,7 @@ const taskSchema = new Schema(
     title: { type: String, required: true, trim: true, maxlength: 200 },
     description: { type: String, default: "", maxlength: 10000 },
     createdAt: { type: Date, required: true, default: Date.now },
+    plannedStartAt: { type: Date, default: null },
     deadline: { type: Date, default: null },
     status: {
       type: String,

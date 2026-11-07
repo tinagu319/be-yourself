@@ -2,7 +2,7 @@ import { Router } from "express";
 import { isValidObjectId, Types } from "mongoose";
 import { requireAuth, type AuthenticatedRequest } from "../auth/requireAuth";
 import { StudySessionModel } from "../models/StudySession";
-import { TaskModel, TIME_MULTIPLIERS } from "../models/Task";
+import { AVAILABLE_TIME_MULTIPLIERS, TaskModel } from "../models/Task";
 
 const router = Router();
 router.use(requireAuth);
@@ -11,8 +11,8 @@ function userId(request: Parameters<typeof requireAuth>[0]) {
   return (request as AuthenticatedRequest).userId;
 }
 
-function isMultiplier(value: unknown): value is (typeof TIME_MULTIPLIERS)[number] {
-  return typeof value === "number" && TIME_MULTIPLIERS.some((allowed) => allowed === value);
+function isMultiplier(value: unknown): value is (typeof AVAILABLE_TIME_MULTIPLIERS)[number] {
+  return typeof value === "number" && AVAILABLE_TIME_MULTIPLIERS.some((allowed) => allowed === value);
 }
 
 function sessionIdIsValid(id: string) {
@@ -20,7 +20,8 @@ function sessionIdIsValid(id: string) {
 }
 
 function currentMultiplier(session: { segments: Array<{ multiplier: number }> }) {
-  return session.segments.at(-1)?.multiplier ?? 1;
+  const multiplier = session.segments.at(-1)?.multiplier ?? 1;
+  return multiplier === 20 ? 10 : multiplier;
 }
 
 type SessionForSettlement = {
@@ -94,7 +95,7 @@ router.post("/", async (request, response, next) => {
     return;
   }
   if (!isMultiplier(multiplier)) {
-    response.status(400).json({ error: "Multiplier must be 1, 10, 20, or 100." });
+    response.status(400).json({ error: "Choose Gentle Focus, Deep Focus, or Super Focus." });
     return;
   }
 
@@ -165,7 +166,7 @@ router.patch("/:sessionId/resume", async (request, response, next) => {
     return;
   }
   if (requestedMultiplier !== undefined && !isMultiplier(requestedMultiplier)) {
-    response.status(400).json({ error: "Multiplier must be 1, 10, 20, or 100." });
+    response.status(400).json({ error: "Choose Gentle Focus, Deep Focus, or Super Focus." });
     return;
   }
   try {
@@ -191,7 +192,7 @@ router.patch("/:sessionId/multiplier", async (request, response, next) => {
     return;
   }
   if (!isMultiplier(multiplier)) {
-    response.status(400).json({ error: "Multiplier must be 1, 10, 20, or 100." });
+    response.status(400).json({ error: "Choose Gentle Focus, Deep Focus, or Super Focus." });
     return;
   }
   try {

@@ -97,3 +97,16 @@ The backend provides nickname/password registration and login at
 `/api/auth/register` and `/api/auth/login`. Use the returned bearer token for
 the authenticated task endpoints: `GET /api/tasks?date=YYYY-MM-DD`,
 `POST /api/tasks`, and `PATCH /api/tasks/:taskId/completion`.
+
+### Gemini API
+
+Set `GEMINI_API_KEY` in `backend/.env` and restart the backend. The backend uses
+only `gemini-3.5-flash-lite`, with no model fallback or environment override.
+Use a Free Tier Google AI Studio project to avoid API charges; choosing a
+free-tier eligible model does not make requests on a Paid Tier project free.
+The key stays on the backend and is never returned to the browser.
+
+Send an authenticated `POST /api/ai/generate` request with JSON
+`{"prompt":"Write a short positive daily recap."}` and
+`Authorization: Bearer <session token>`. The response is `{"text":"..."}`.
+Generation runs only when this endpoint is called; results are not saved.

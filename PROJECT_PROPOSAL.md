@@ -28,7 +28,7 @@ Tasks are completed only when the user checks them off. Starting or ending a Stu
 
 Each Study Room session is associated with a task. The timer will support start, pause, resume, and stop, and will calculate elapsed time from timestamps so that refreshes or background tabs do not corrupt the record.
 
-The available speed settings are **1x, 10x, 20x, and 100x**. Users may change speed while studying. The system will settle the elapsed time at the old speed before applying the new speed, and will keep real and virtual duration separate:
+The available focus modes are **Gentle Focus (1x), Deep Focus (10x), and Super Focus (100x)**. Users may change modes while studying. The system will settle the elapsed time at the old speed before applying the new speed, and will keep real and virtual duration separate:
 
 > Virtual duration = sum of (real duration in each segment × that segment's multiplier)
 

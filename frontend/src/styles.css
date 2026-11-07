@@ -46,9 +46,13 @@ button { cursor: pointer; }
 .is-done .task-title { color: #a0a498; text-decoration: line-through; }
 .task-badge { flex: 0 0 auto; padding: 5px 7px; border-radius: 5px; background: #f0f3e9; color: #768764; font-size: 9px; font-weight: 750; letter-spacing: .06em; }
 .deadline { flex: 0 0 auto; color: #a0885f; background: #f7f1e5; border-radius: 5px; padding: 5px 7px; font-size: 10px; }
-.doit-button { flex: 0 0 auto; padding: 7px 10px; border: 0; border-radius: 6px; background: #e8efe0; color: #5d754a; font-size: 11px; font-weight: 700; }
-.delete-button { flex: 0 0 auto; width: 28px; height: 28px; border: 0; border-radius: 50%; background: transparent; color: #9a9f93; font-size: 19px; line-height: 1; }
-.delete-button:hover { background: #f8eeea; color: #a05d4c; }
+.task-actions { flex: 0 0 auto; display: flex; align-items: center; gap: 5px; }
+.icon-button { width: 31px; height: 31px; border: 0; border-radius: 7px; display: inline-grid; place-items: center; background: transparent; color: #828a7b; }
+.icon-button:hover { background: #f0f2ec; color: #576c48; }
+.icon-button svg, .doit-button svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.doit-button { flex: 0 0 auto; display: inline-flex; align-items: center; gap: 6px; padding: 8px 10px; border: 0; border-radius: 6px; background: #e8efe0; color: #5d754a; font-size: 11px; font-weight: 700; }
+.doit-button svg { width: 12px; height: 12px; fill: currentColor; stroke: none; }
+.danger-icon:hover { background: #f8eeea; color: #a05d4c; }
 .edit-title { flex: 1; min-width: 0; border: 1px solid #b6c4a8; border-radius: 5px; padding: 7px 8px; background: white; color: #343a30; font-size: 13px; outline: none; }
 .empty, .loading-state { color: #979b90; font-size: 13px; padding: 14px 0; }
 .add-task { display: flex; gap: 9px; }
@@ -75,6 +79,26 @@ button { cursor: pointer; }
 .auth-switch { margin: 20px 0 0; color: #888d82; text-align: center; font-size: 12px; }
 .error-banner { margin-bottom: 18px; padding: 11px 14px; border: 1px solid #f0d4ca; border-radius: 8px; background: #fff3ef; color: #9e4d3b; font-size: 12px; line-height: 1.5; }
 .study-room { max-width: 650px; margin: 0 auto; padding: 28px; }
+.task-details { max-width: 790px; margin: 0 auto; }
+.details-heading { margin: 35px 0 22px; display: flex; align-items: flex-start; justify-content: space-between; gap: 18px; }
+.details-heading h1 { margin: 0; color: #292d25; font-size: clamp(26px, 5vw, 34px); letter-spacing: -.05em; }
+.status-chip { padding: 6px 9px; border-radius: 20px; background: #f0f1eb; color: #6f776a; font-size: 10px; text-transform: capitalize; }
+.status-completed { background: #eaf0e3; color: #5b7548; }
+.status-expired { background: #f7ece7; color: #9a624f; }
+.details-actions { display: flex; align-items: center; gap: 8px; padding-bottom: 19px; border-bottom: 1px solid #eff0ea; }
+.complete-control { margin-right: auto; display: inline-flex; align-items: center; gap: 8px; color: #62695e; font-size: 12px; }
+.complete-control input { width: 15px; height: 15px; accent-color: #6c8557; }
+.detail-description { margin: 20px 0; color: #62695e; font-size: 13px; line-height: 1.7; white-space: pre-wrap; }
+.detail-facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; overflow: hidden; border: 1px solid #eceee6; border-radius: 10px; background: #eceee6; }
+.detail-facts div { min-width: 0; min-height: 72px; padding: 14px 15px; display: flex; flex-direction: column; justify-content: center; gap: 7px; background: #fffefa; }
+.detail-facts span { color: #92978c; font-size: 10px; }
+.detail-facts strong { color: #41483b; font-size: 12px; font-weight: 600; }
+.details-edit-form { display: flex; flex-direction: column; gap: 15px; margin-top: 22px; }
+.details-edit-form label { display: flex; flex-direction: column; gap: 7px; color: #5d6458; font-size: 11px; font-weight: 650; }
+.details-edit-form input, .details-edit-form textarea { width: 100%; padding: 10px 11px; border: 1px solid #e1e4db; border-radius: 7px; color: #33392f; font: inherit; font-size: 13px; }
+.details-edit-form textarea { resize: vertical; line-height: 1.55; }
+.details-edit-actions { display: flex; gap: 9px; }
+.cancel-button { border: 0; border-radius: 8px; padding: 12px 15px; background: #f0f1eb; color: #687061; font-size: 12px; font-weight: 650; }
 .back-button { border: 0; background: none; color: #74816a; padding: 4px 0; font-size: 12px; }
 .room-heading { margin-top: 46px; text-align: center; }
 .room-heading h1 { font-size: clamp(27px, 5vw, 35px); }
@@ -100,8 +124,9 @@ button { cursor: pointer; }
   .task-title { font-size: 12px; }
   .task-badge { font-size: 8px; padding: 4px 5px; }
   .deadline { display: none; }
-  .doit-button { padding: 7px 8px; font-size: 10px; }
-  .delete-button { width: 24px; }
+  .task-actions { gap: 2px; }
+  .icon-button { width: 27px; height: 27px; }
+  .doit-button { gap: 4px; padding: 7px; font-size: 10px; }
   .add-task button { padding: 0 11px; }
   .auth-card { padding: 28px 22px; }
   .study-room { padding: 22px 17px; }
@@ -109,4 +134,8 @@ button { cursor: pointer; }
   .room-speed { gap: 5px; }
   .room-speed>span { margin-right: 2px; }
   .room-speed button { padding: 7px 8px; }
+  .task-details { padding: 19px 15px; }
+  .details-actions { gap: 4px; }
+  .complete-control { font-size: 10px; gap: 5px; }
+  .detail-facts div { padding: 11px; }
 }
