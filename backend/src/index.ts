@@ -5,6 +5,7 @@ import mongoose from "mongoose";
 import { connectToDatabase } from "./config/database";
 import authRoutes from "./routes/auth";
 import aiRoutes from "./routes/ai";
+import dailyRecapRoutes from "./routes/dailyRecap";
 import studySessionRoutes from "./routes/studySessions";
 import taskRoutes from "./routes/tasks";
 
@@ -14,6 +15,7 @@ const port = Number(process.env.PORT ?? 3000);
 app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/ai", aiRoutes);
+app.use("/api/daily-recap", dailyRecapRoutes);
 app.use("/api/tasks", taskRoutes);
 app.use("/api/study-sessions", studySessionRoutes);
 
