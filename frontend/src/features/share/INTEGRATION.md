@@ -1,0 +1,51 @@
+# Share image integration
+
+Import the production component and data type from this module:
+
+```tsx
+import { ShareRecap, type DailyRecap } from "./features/share";
+
+// recap is the selected day's summary and recorded totals, supplied by the host.
+<ShareRecap recap={recap} />
+```
+
+`DailyRecap` uses the requested shape in `types.ts`. `date` is a calendar date
+(`YYYY-MM-DD`), task counts are non-negative integers, and durations are finite,
+non-negative milliseconds. Displayed durations are floored to whole seconds;
+virtual time is taken directly from the input, never recalculated from real time.
+
+The host should place this component in the Dashboard's user-initiated daily
+sharing flow, after it has obtained that day's `DailyRecap`. This module does not
+fetch records or generate AI text. The component's **Share** button is the only
+image-generation trigger. Mounting and prop changes never generate an image.
+**Save** downloads exactly the previewed PNG as `be-yourself-YYYY-MM-DD.png`.
+Changing the input hides a stale preview and disables Save until Share is pressed
+again. Generation errors appear inline and can be retried with Share.
+
+The image separates `AI RECAP / JUST FOR FUN`, `REAL RECORDS`, and accelerated
+virtual study time. Summary text never supplies or modifies the statistical values.
+The image is 1080 pixels wide; height expands for the summary. Oversized summaries
+that exceed the Canvas size guard show an error rather than being silently clipped.
+Styles are scoped to `.by-share`; no global stylesheet changes are needed.
+
+## Independent local demo
+
+Run the existing frontend development command, then open:
+
+`/src/features/share/demo.html`
+
+This development-only entry owns its fixture in `demo.tsx`. It is not imported by
+`index.ts`, `App.tsx`, or `main.tsx`, and does not generate a PNG until Share is
+pressed. Do not import `demo.tsx` into the main window.
+
+## Verification
+
+- Existing `npm run build` passes (TypeScript and Vite).
+- Standalone demo also bundles with Vite.
+- Real Chrome checks cover no generation on mount/prop changes, duplicate clicks,
+  PNG signature and dimensions, exact counts and durations, separate labels,
+  stale preview invalidation, URL cleanup, invalid dates/statistics, zero and
+  fractional durations, long CJK/multiline/unbroken text, and oversized summaries.
+- Desktop and 375px mobile previews visually inspected; no horizontal overflow.
+- Native Save downloads a PNG whose SHA-256 matches the preview Blob.
+- No backend, Gemini, or social-platform calls; no added dependencies.
