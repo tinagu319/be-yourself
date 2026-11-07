@@ -9,7 +9,7 @@ The project will build on the existing React + Vite frontend and Node.js + Expre
 ## 2. Product Goals
 
 - Make it quick to review and manage tasks from a simple Dashboard.
-- Provide a Study Room that records real and accelerated virtual study time accurately.
+- Provide a task timer that records real and accelerated virtual work time accurately.
 - Keep task completion and daily sharing under the user's control.
 - Preserve useful history without crowding the main screen.
 - Turn an ordinary day into a playful, saveable recap when the user chooses to share.
@@ -20,15 +20,15 @@ The project will build on the existing React + Vite frontend and Node.js + Expre
 
 The Dashboard will show each active task's title, a manual completion checkbox, and a deadline cue when relevant. It will avoid showing detailed metadata by default.
 
-Users will be able to create and manage tasks. Opening a task will show its description, creation date, deadline, status, real and virtual study time, study sessions, subtasks, and related history. Overdue unfinished tasks will leave the active list while remaining in historical records.
+Users will be able to create and manage tasks. Opening a task will show its description, creation date, deadline, status, real and virtual work time, work sessions, subtasks, and related history. Overdue unfinished tasks will leave the active list while remaining in historical records.
 
-Tasks are completed only when the user checks them off. Starting or ending a Study Room session will never complete a task automatically.
+Tasks are completed only when the user checks them off. Starting or ending a task timer session will never complete a task automatically.
 
-### 3.2 Study Room and Time Acceleration
+### 3.2 Task Timer and Time Acceleration
 
-Each Study Room session is associated with a task. The timer will support start, pause, resume, and stop, and will calculate elapsed time from timestamps so that refreshes or background tabs do not corrupt the record.
+Each work session is associated with a task. The timer will support start, pause, resume, and stop, and will calculate elapsed time from timestamps so that refreshes or background tabs do not corrupt the record.
 
-The available speed settings are **1x, 10x, 20x, and 100x**. Users may change speed while studying. The system will settle the elapsed time at the old speed before applying the new speed, and will keep real and virtual duration separate:
+The available focus modes are **Gentle Focus (1x), Deep Focus (10x), and Super Focus (100x)**. Users may change modes while studying. The system will settle the elapsed time at the old speed before applying the new speed, and will keep real and virtual duration separate:
 
 > Virtual duration = sum of (real duration in each segment × that segment's multiplier)
 
@@ -36,13 +36,13 @@ Only time spent in a running session is counted. Paused time and time spent mere
 
 ### 3.3 Daily Health Challenges and Activity Records
 
-The Dashboard will present five simple daily health challenges. Users will mark each challenge complete themselves. The system will also let users record other daily activities. Challenge status and activity records will be retained by date.
+Five daily health challenges are added as ordinary tasks. They use the same presentation as other tasks, without a separate badge or category label. Users mark them complete manually. They are included in the combined completed-task count in daily sharing. The system will also let users record other daily activities. Task status and activity records will be retained by date.
 
 ### 3.4 User-Initiated AI Daily Recap and Share Image
 
 The recap and sharing flow is one feature, initiated only by the user pressing **Share**. At that moment, the app will gather that day's completed tasks, completed health challenges, study records and time totals, and user-entered activities. AI will turn those facts into an exaggerated, humorous, positive recap.
 
-The app will create a polished image containing the recap and actual daily statistics, then show a preview with a **Save** action. The entertainment copy will be visually distinct from factual figures, and AI wording will not change the underlying numbers.
+The app will create a polished image containing the recap, combined completed-task count, and real and virtual work time, then show a preview with a **Save** action. The image will prominently state **Day N of self-discipline**, using the same Day 99 starting value and date-based progression as the Dashboard. This day value is computed by the backend, not invented by AI. The entertainment copy will be visually distinct from factual figures, and AI wording will not change the underlying numbers.
 
 The app will not generate a recap or image before Share is pressed. It will not integrate with social platform APIs or publish automatically; users decide whether and where to post the saved image.
 
